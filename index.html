@@ -1,0 +1,229 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Calon by sarah</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: 'Courier New', monospace;
+      padding: 20px;
+      margin: 0;
+      overflow: hidden;
+      text-align: center;
+    }
+    h1 {
+      font-size: 3em;
+      margin: 20px 0;
+      z-index: 1;
+      position: relative;
+    }
+    #start-btn {
+      position: relative;
+      margin: 50px auto;
+      display: block;
+      padding: 18px 36px;
+      font-size: 1.6em;
+      font-weight: bold;
+      color: white;
+      background-color: #007bff;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      box-shadow: 0 0 15px #007bff, 0 0 30px #007bff;
+      transition:background-color 0.5s ease, transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    #start-btn:hover {
+      transform: scale(1.1);
+      background-color:#dc3545;
+      box-shadow: 0 0 25px #dc3545, 0 0 50px #dc3545;
+      animation: pulse 1.2s infinite;
+    }
+
+    #center-gif {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 2s ease;
+      z-index: 10;
+    }
+
+    #lyrics {
+      max-width: 800px;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding-right: 10px;
+      margin: 10px auto;
+      text-align: left;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    #lyrics::-webkit-scrollbar{
+      display: none;
+    }
+    .line pre {
+      margin: 0.3em 0;
+      font-size: 3.6em;
+      line-height: 1.6;
+      white-space: normal;
+      word-break: break-word;
+      max-width: 90vw;
+    }
+    .gif-float {
+      position: fixed;
+      z-index: 0;
+      pointer-events: none;
+      animation: float 8s linear forwards;
+      opacity: 0.8;
+      will-change: transform, opacity;
+    }
+    .RB-text {
+      animation: RB 0.3s infinite alternate;
+    }
+
+    @keyframes RB {
+     0% {color: #ff0000;
+    text-shadow:0 0 25px #ff0000;
+    }
+     100% {color: #007bff;
+    text-shadow:0 0 25px #007bff;
+    } 
+    }
+
+    
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 15px #dc3545, 0 0 30px #dc3545;
+      }
+      50% {
+        transform: scale(1.08);
+        box-shadow: 0 0 25px #dc3545, 0 0 50px #dc3545;
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 25px #dc3545, 0 0 30px #dc3545;
+      }
+    }
+    @keyframes float {
+      0% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translate(var(--x), var(--y)) rotate(var(--rot)) scale(var(--scale));
+        opacity: 0.2;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1 id="judul">Calon Mantu Idaman</h1>
+  <button id="start-btn">Mulai</button>
+  <img id="center-gif" src="momoi.gif" alt="Center GIF">
+  <audio id="song" src="cmtmu.mp3" preload="auto"></audio>
+  <div id="lyrics"></div>
+
+  <script>
+    const lyrics = [
+      ["But do you feel it too?", 60],
+      ["Like the why I do?", 55],
+      ["Aku calon mantu🫣", 88],
+      ["Terbaik mamamu🫵", 83],
+      ["Walaupun hatimu♥️", 70],
+      ["Sekeras batu🗿", 78],
+      ["Stil got you on mind", 63],
+      ["No matter what you do", 55],
+      [">>>>>>>>>>", 5],
+      ["But do you feel it too?", 40],
+      ["Like the why I do?", 50],
+      ["Aku calon mantu🫣", 50],
+      ["Terbaik mamamu🫵", 59],
+      ["Walaupun hatimu♥️", 65],
+      ["Sekeras batu🗿", 80],
+      ["Stil got you on mind", 55],
+      ["No matter what you do", 55]
+    ];
+    const delays = [300, 450, 260, 250, 550, 500, 290, 300, 400, 450, 500, 500, 500, 600, 650, 500, 500];
+
+    function animateText(text, speed, container) {
+      return new Promise(resolve => {
+        let i = 0;
+        const iv = setInterval(() => {
+          if (i < text.length) container.querySelector('pre').textContent += text[i++];
+          else { clearInterval(iv); resolve(); }
+        }, speed);
+      });
+    }
+
+    async function sing() {
+      const cont = document.getElementById('lyrics');
+      for (let i = 0; i < lyrics.length; i++) {
+        const [text, speed] = lyrics[i];
+        const line = document.createElement('div');
+        line.className = 'line';
+        const pre = document.createElement('pre');
+        pre.style.margin = '0';
+        pre.style.display = 'inline-block';
+        line.appendChild(pre);
+        cont.appendChild(line);
+        await new Promise(r => setTimeout(r, delays[i]));
+        await animateText(text, speed, line);
+      }
+    }
+
+    function createFloatingGif() {
+      const gif = document.createElement("img");
+      gif.src = "gns.gif";
+      gif.className = "gif-float";
+      const size = Math.random() * 160 + 60;
+      gif.style.width = `${size}px`;
+      gif.style.top = `${Math.random() * window.innerHeight}px`;
+      gif.style.left = `${Math.random() * window.innerWidth}px`;
+      gif.style.setProperty('--x', `${Math.random() * 600 - 300}px`);
+      gif.style.setProperty('--y', `${Math.random() * 600 - 300}px`);
+      gif.style.setProperty('--scale', (Math.random() * 1.5 + 0.5).toFixed(2));
+      gif.style.setProperty('--rot', `${Math.random() * 360}deg`);
+      document.body.appendChild(gif);
+      setTimeout(() => gif.remove(), 8000);
+    }
+
+    document.getElementById('start-btn').addEventListener('click', () => {
+      const btn = document.getElementById('start-btn');
+      const centerGif = document.getElementById('center-gif');
+      const audio = document.getElementById('song');
+      btn.style.display = 'none';
+      audio.play();
+
+      setTimeout(() => {
+        const gifInt = setInterval(createFloatingGif, 500);
+        setTimeout(() => clearInterval(gifInt), 20000);
+        sing();
+      }, 0);
+
+      audio.addEventListener('timeupdate', () => {
+        const judul = document.getElementById('judul')
+        const current = audio.currentTime;
+        const duration = audio.duration;
+        const showAt = 13;
+        const hideBeforeEnd = 1;
+        if (current >= 13 && !judul.classList.contains('RB-text')) {
+          judul.classList.add('RB-text');
+        }
+        if (current >= showAt && getComputedStyle(centerGif).opacity === '0') {
+          centerGif.style.opacity = '1';
+        }
+        if (duration && current >= duration - hideBeforeEnd && getComputedStyle(centerGif).opacity === '1') {
+          centerGif.style.opacity = '0';
+        }
+      });
+    });
+  </script>
+</body>
+</html>
